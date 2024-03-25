@@ -42,3 +42,7 @@ Isso iniciará o servidor Symfony e disponibilizará sua aplicação para acesso
 ## Acesso à Aplicação
 
 Uma vez que o servidor Symfony esteja em execução, você pode acessar sua aplicação em http://localhost:8000 no seu navegador web.
+
+## Coleção do Postman
+
+Para facilitar o teste dos endpoints da aplicação, um arquivo chamado 'Vox Application.postman_collection.json' está incluído. Você pode importar este arquivo para o Postman e ter acesso aos endpoints criados.

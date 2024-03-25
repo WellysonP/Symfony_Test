@@ -146,10 +146,6 @@ class PartnerController extends AbstractController
             }
         }
 
-        // if (!isset ($partner_request['id_company']) || empty ($partner_request['id_company'])) {
-        //     $error['id_company'] = 'attribute id_company is required';
-        // }
-
         if (!empty ($error)) {
             return $this->json([
                 'message' => 'Failed!',
@@ -157,12 +153,7 @@ class PartnerController extends AbstractController
             ], 400);
         }
 
-        // $company = $companyRepository->findOneBy(['id' => $partner_request['id_company']]);
-
         $partner = $partnerRepository->convertToPartner($request);
-        // $partner->addCompany($company);
-
-
         $partnerRepository->add($partner, true);
 
         return $this->json([
@@ -189,13 +180,10 @@ class PartnerController extends AbstractController
             ], 400);
         }
 
-
         $company = $companyRepository->findOneBy(['id' => $partner_request['id_company']]);
         $partner = $partnerRepository->findOneBy(['id' => $partner_request['id_partner']]);
 
         $partner->addCompany($company);
-
-
 
         return $this->json([
             'message' => 'relation created succesfully!',
