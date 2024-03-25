@@ -154,22 +154,22 @@ class Partner
         return $this->companies;
     }
 
-    // public function addCompany(Company $company): static
-    // {
-    //     if (!$this->companies->contains($company)) {
-    //         $this->companies->add($company);
-    //         $company->addPartner($this);
-    //     }
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->addPartner($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeCompany(Company $company): static
-    // {
-    //     if ($this->companies->removeElement($company)) {
-    //         $company->removePartner($this);
-    //     }
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            $company->removePartner($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 }

@@ -2,18 +2,22 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CompanyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[ORM\Table(name: 'companys')]
+
 class Company
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -34,7 +38,14 @@ class Company
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\ManyToMany(targetEntity: Partner::class, mappedBy: 'companies')]
+    // #[
+    //     ORM\ManyToMany(targetEntity: Partner::class, mappedBy: 'companies')
+    // ]
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Partner", mappedBy="companies")
+     * @Groups("post:read")
+     */
     private Collection $partners;
 
     /**
@@ -59,6 +70,8 @@ class Company
 
         return $this;
     }
+
+
 
     public function getName(): ?string
     {

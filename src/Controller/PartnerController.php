@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Company;
+use App\Entity\Partner;
 use App\Entity\PartnerObservation;
+use App\Repository\CompanyRepository;
 use App\Repository\PartnerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -126,7 +129,7 @@ class PartnerController extends AbstractController
     }
 
     #[Route('/add/partner', name: 'create_partner', methods: ['POST'])]
-    public function create(Request $request, PartnerRepository $partnerRepository): JsonResponse
+    public function create(Request $request, PartnerRepository $partnerRepository, CompanyRepository $companyRepository): JsonResponse
     {
         $partner_request = json_decode($request->getContent(), true);
         $error = [];
@@ -137,11 +140,15 @@ class PartnerController extends AbstractController
         if (!isset ($partner_request['cpf']) || empty ($partner_request['cpf'])) {
             $error['cpf'] = 'attribute cpf is required';
         } else {
-            $existing_company = $partnerRepository->findOneBy(['cpf' => $partner_request['cpf']]);
-            if ($existing_company) {
+            $existing_partner = $partnerRepository->findOneBy(['cpf' => $partner_request['cpf']]);
+            if ($existing_partner) {
                 $error['cpf'] = 'cpf already registered';
             }
         }
+
+        // if (!isset ($partner_request['id_company']) || empty ($partner_request['id_company'])) {
+        //     $error['id_company'] = 'attribute id_company is required';
+        // }
 
         if (!empty ($error)) {
             return $this->json([
@@ -150,13 +157,50 @@ class PartnerController extends AbstractController
             ], 400);
         }
 
+        // $company = $companyRepository->findOneBy(['id' => $partner_request['id_company']]);
+
         $partner = $partnerRepository->convertToPartner($request);
+        // $partner->addCompany($company);
+
 
         $partnerRepository->add($partner, true);
 
         return $this->json([
             'message' => 'partner created succesfully!',
             'partner' => $partner
+        ], 201);
+    }
+    #[Route('/add/partner_company', name: 'create_partner_company', methods: ['POST'])]
+    public function create_relation(Request $request, PartnerRepository $partnerRepository, CompanyRepository $companyRepository): JsonResponse
+    {
+        $partner_request = json_decode($request->getContent(), true);
+        $error = [];
+
+        if (!isset ($partner_request['id_company']) || empty ($partner_request['id_company'])) {
+            $error['id_company'] = 'attribute id_company is required';
+        }
+        if (!isset ($partner_request['id_partner']) || empty ($partner_request['id_partner'])) {
+            $error['id_partner'] = 'attribute id_partner is required';
+        }
+        if (!empty ($error)) {
+            return $this->json([
+                'message' => 'Failed!',
+                'error' => $error
+            ], 400);
+        }
+
+
+        $company = $companyRepository->findOneBy(['id' => $partner_request['id_company']]);
+        $partner = $partnerRepository->findOneBy(['id' => $partner_request['id_partner']]);
+
+        $partner->addCompany($company);
+
+
+
+        return $this->json([
+            'message' => 'relation created succesfully!',
+            'company' => $company,
+            'partner' => $partner,
         ], 201);
     }
 }
